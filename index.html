@@ -309,8 +309,16 @@
         if (error) throw error;
 
         if (data.session && data.user) {
-          alert("Registration successful. Your account has been created.");
-          await showDashboard(data.user);
+  const { error: memberError } = await db.from("members").insert([{
+    user_id: data.user.id,
+    email: email,
+    full_name: fullName,
+    phone: phone || null,
+    membership_plan: membershipPlan
+  }]);
+  if (memberError) alert("Account created but member not saved: " + memberError.message);
+  else alert("Registration successful. Your account has been created.");
+  await showDashboard(data.user);
         } else {
           $("formNotice").textContent =
             "Registration submitted. Check your email for a confirmation link before logging in.";
